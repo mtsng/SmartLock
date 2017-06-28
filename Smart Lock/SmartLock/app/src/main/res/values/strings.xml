@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">SmartLock</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="title_activity_fingerprint">Fingerprint</string>
+    <string name="title_activity_qr">QR Code</string>
+    <string name="title_activity_nfc">NFC</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="edit_message">Enter a message</string>
+    <string name="button_send">LED</string>
+    <string name="button_QR">Send QR Code</string>
+    <string name="button_Finger">Fingerprint</string>
+    <string name="button_NFC">NFC</string>
+</resources>
