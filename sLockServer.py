@@ -11,7 +11,7 @@ import sys
 import Adafruit_PN532 as PN532
 
 
-#bus = smbus.SMBus(1)
+bus = smbus.SMBus(1)
 
 address = 0x04
 
@@ -20,6 +20,8 @@ scanfinger = 2
 scanQR = 3
 scannfc = 4
 unlock = 226
+
+os.system('modprobe w1-gpio')	
 
 keys = ['a', 'b', 'c', 'd', 'e', 'f', 'g', '9', '8', '7', '6', '5', '4', '3', '2', '1', '0']
 
@@ -150,8 +152,7 @@ def scanNFC():
 		time.sleep(1)
 	return 0
 
-def Btcomm():
-	
+def main():		
 	server_sock = BluetoothSocket(RFCOMM)
 	server_sock.bind(("", PORT_ANY))
 	server_sock.listen(1)
@@ -160,19 +161,16 @@ def Btcomm():
 
 	uuid = "0000110E-0000-1000-8000-00805F9B34FB"
 	
-	counter = 0
-	
+	unlock_code = 'none'
+
 
 	advertise_service(server_sock, "LockPi",
 					service_id = uuid,
 					service_classes = [uuid, SERIAL_PORT_CLASS],
 					profiles = [SERIAL_PORT_PROFILE],
 					)
-	
-	unlock_code = 'none'
-	
-	print 'Welcome Home'
-	while counter < 20:
+	print "Welcome"					
+	while True:
 		print "Waiting for connection on RFCOMM channel %d" % port
 	
 		client_sock, client_info = server_sock.accept()
@@ -233,67 +231,6 @@ def Btcomm():
 			client_sock.send(data)
 			print "sending [%s]" % data
 			
-			
-			
-		except IOError:
-			pass
-		
-		except KeyboardInterrupt:
-			print "disconnected"
-			client_sock.close()
-			server_sock.close()
-			print "all done"
-			break	
-		
-		counter =  counter + 1
-		time.sleep(1)
-def main():		
-	server_sock = BluetoothSocket(RFCOMM)
-	server_sock.bind(("", PORT_ANY))
-	server_sock.listen(1)
-
-	port = server_sock.getsockname()[1]
-
-	uuid = "0000110E-0000-1000-8000-00805F9B34FB"
-	
-	passcode = 'Kentswhiteshirt'
-
-
-	advertise_service(server_sock, "LockPi",
-					service_id = uuid,
-					service_classes = [uuid, SERIAL_PORT_CLASS],
-					profiles = [SERIAL_PORT_PROFILE],
-					)
-	print "Hello"					
-	while True:
-		print "Waiting for connection on RFCOMM channel %d" % port
-	
-		client_sock, client_info = server_sock.accept()
-		print "Accepted connection from ", client_info
-	
-		try:
-			data = client_sock.recv(1024)
-			if len(data) == 0: 
-				break
-			print "received [%s]" % data
-			if data == passcode:
-				data = 'Logged in'
-				client_sock.send(data)
-				print 'Sending [%s]' % data
-				client_sock.close()
-				server_sock.close()
-				Btcomm()
-			elif data == 'exit':
-				print "disconnected"
-				client_sock.close()
-				server_sock.close()
-				print "all done"
-				break
-			else:
-				data = 'Wrong Log In'
-			client_sock.send(data)
-			print "sending [%s]" % data
-			
 		except IOError:
 			pass
 		
@@ -303,5 +240,5 @@ def main():
 			server_sock.close()
 			print "all done"
 			break
-			
+
 main()
